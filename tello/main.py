@@ -3,6 +3,7 @@ import sdk as tello
 import time, cv2
 from threading import Thread
 import keyboard 
+import config
 
 
 keepread = True
