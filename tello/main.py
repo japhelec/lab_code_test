@@ -18,7 +18,9 @@ def recvImage():
         frame = drone.read()
         if frame is None or frame.size == 0:
             continue 
-        pose_estimation(frame, camera)
+        
+        LP_pose = pose_estimation(frame, camera)
+        # print(LP_pose)
 
     cv2.destroyAllWindows()
 

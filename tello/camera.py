@@ -29,6 +29,9 @@ class Camera():
         elif self.vision == CameraVision.DOWNVISION:
             self.vision = CameraVision.FORWARDVISION
 
+    def get_vision(self):
+        return self.vision
+
     def get_mtx(self):
         if self.vision == CameraVision.FORWARDVISION:
             return self.fc_mtx
@@ -40,6 +43,7 @@ class Camera():
             return self.fc_dist
         elif self.vision == CameraVision.DOWNVISION:
             return self.dc_dist
+    
 
 
 

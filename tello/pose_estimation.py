@@ -1,7 +1,8 @@
 import numpy as np
 import cv2
 from cv2 import aruco
-from camera import Camera
+from camera import CameraVision
+from coordinateTransform import Rx, Ry, Rz
 
 # ======================
 # ArUco marker coordinate
@@ -27,8 +28,16 @@ from camera import Camera
 
 
 ARUCO_SIDE_LENGTH = 7.08 # in meters
-DEBUG = True
+DEBUG = False
 font = cv2.FONT_HERSHEY_SIMPLEX
+
+def CT_Aruco_to_Body(vision):
+    if (vision == CameraVision.FORWARDVISION):
+        return Rx(-90)
+    elif (vision == CameraVision.DOWNVISION):
+        return Rx(180).dot(Rz(90))
+
+
 
 
 def pose_estimation(frame, camera):
@@ -41,9 +50,12 @@ def pose_estimation(frame, camera):
     if ids is not None:
         
         rvec, tvec, _ = aruco.estimatePoseSingleMarkers(corners, ARUCO_SIDE_LENGTH, camera.get_mtx(), camera.get_dist())
-    
+        
         if (DEBUG):
-            print("tvec", tvec)
+            print("- original tvec ")
+            print(tvec) # shape (1,1,3)
+            print("- After CT ")
+            print(CT_Aruco_to_Body(camera.get_vision()).dot(tvec[0].T))
             (rvec-tvec).any()
 
             for i in range(rvec.shape[0]):
@@ -51,6 +63,11 @@ def pose_estimation(frame, camera):
                 aruco.drawDetectedMarkers(frame, corners)
         
             cv2.putText(frame, "Id: " + str(ids), (0,64), font, 1, (0,255,0),2,cv2.LINE_AA)
+        else:
+            CT = CT_Aruco_to_Body(camera.get_vision())
+            return CT.dot(tvec[0].T)
+        
+
     else:
         cv2.putText(frame, "No Ids", (0,64), font, 1, (0,255,0),2,cv2.LINE_AA)
 

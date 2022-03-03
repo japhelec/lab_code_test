@@ -8,28 +8,28 @@ import numpy as np
 # theta in degrees
 # *******************
 def Rx(degree):
-    rad = np.radian(degree)
+    rad = np.radians(degree)
 
     return np.array([
         [1, 0, 0],
         [0, np.cos(rad), -np.sin(rad)], 
         [0, np.sin(rad), np.cos(rad)]
-        ])
+        ]) # shape (3,3)
 
 def Ry(degree):
-    rad = np.radian(degree)
+    rad = np.radians(degree)
 
     return np.array([
         [np.cos(rad), 0, np.sin(rad)],
         [0, 1, 0], 
         [-np.sin(rad), 0, np.cos(rad)]
-        ])
+        ]) # shape (3,3)
 
 def Rz(degree):
-    rad = np.radian(degree)
+    rad = np.radians(degree)
 
     return np.array([
         [np.cos(rad), -np.sin(rad), 0],
         [np.sin(rad), np.cos(rad), 0], 
         [0, 0, 1]
-        ])
+        ]) # shape (3,3)
