@@ -1,15 +1,18 @@
 import sdk as tello
+from camera import Camera
 
-import time, cv2
+import cv2
 from threading import Thread
+import time
 import keyboard 
-import config
 
 
 keepread = True
 drone = tello.Tello('', 8889)  
+camera = Camera()
 
-def streaming():
+# recv image
+def recvImage():
     while keepread:
         frame = drone.read()
         if frame is None or frame.size == 0:
@@ -19,9 +22,6 @@ def streaming():
 
     cv2.destroyAllWindows()
 
-vsm = Thread(target=streaming)
-vsm.start()
-
 # keyborad
 def recvkeybord(): 
     while True:
@@ -29,16 +29,19 @@ def recvkeybord():
             global keepread
             keepread = False
             break
-        if keyboard.is_pressed('d'):
-            drone.send_command("downvision 1")
-        if keyboard.is_pressed('f'):
-            drone.send_command("downvision 0")
-            
-
-ss = Thread(target=recvkeybord)
-ss.start()
+        if keyboard.is_pressed('s'):
+            camera.switch_vision()
+            drone.send_command("downvision " + str(camera.vision.value))
+            time.sleep(2)
 
 
 
-vsm.join()
+
+tImage = Thread(target=recvImage)
+tImage.start() 
+
+tKeyboard = Thread(target=recvkeybord)
+tKeyboard.start()
+
+tImage.join()
 print("Tello control end")
