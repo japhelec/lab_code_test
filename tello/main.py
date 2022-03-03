@@ -25,14 +25,17 @@ def recvImage():
 # keyborad
 def recvkeybord(): 
     while True:
-        if keyboard.is_pressed('c'):
+        if keyboard.is_pressed('q'): #quit
             global keepread
             keepread = False
             break
-        if keyboard.is_pressed('s'):
+        if keyboard.is_pressed('v'): #vision
             camera.switch_vision()
             drone.send_command("downvision " + str(camera.vision.value))
             time.sleep(2)
+        if keyboard.is_pressed('s'): #stop
+            drone.send_command("stop")
+            time.sleep(1)
 
 
 
