@@ -27,6 +27,7 @@ from camera import Camera
 
 
 ARUCO_SIDE_LENGTH = 7.08 # in meters
+DEBUG = True
 font = cv2.FONT_HERSHEY_SIMPLEX
 
 
@@ -37,22 +38,22 @@ def pose_estimation(frame, camera):
 
     ## detect
     corners, ids, rejectedImgPoints = aruco.detectMarkers(gray,aruco_dict,parameters=parameters)
-
     if ids is not None:
-
+        
         rvec, tvec, _ = aruco.estimatePoseSingleMarkers(corners, ARUCO_SIDE_LENGTH, camera.get_mtx(), camera.get_dist())
     
-        print("tvec", tvec)
+        if (DEBUG):
+            print("tvec", tvec)
+            (rvec-tvec).any()
 
-        (rvec-tvec).any()
-
-        for i in range(rvec.shape[0]):
-            aruco.drawAxis(frame, camera.get_mtx(), camera.get_dist(), rvec[i, :, :], tvec[i, :, :], 0.03)
-            aruco.drawDetectedMarkers(frame, corners)
-    
-        cv2.putText(frame, "Id: " + str(ids), (0,64), font, 1, (0,255,0),2,cv2.LINE_AA)
+            for i in range(rvec.shape[0]):
+                aruco.drawAxis(frame, camera.get_mtx(), camera.get_dist(), rvec[i, :, :], tvec[i, :, :], 0.03)
+                aruco.drawDetectedMarkers(frame, corners)
+        
+            cv2.putText(frame, "Id: " + str(ids), (0,64), font, 1, (0,255,0),2,cv2.LINE_AA)
     else:
         cv2.putText(frame, "No Ids", (0,64), font, 1, (0,255,0),2,cv2.LINE_AA)
 
-    cv2.imshow("frame",frame)
-    cv2.waitKey(1)
+    if DEBUG:
+        cv2.imshow("frame",frame)
+        cv2.waitKey(1)
