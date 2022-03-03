@@ -1,5 +1,6 @@
 import sdk as tello
 from camera import Camera
+from pose_estimation import pose_estimation
 
 import cv2
 from threading import Thread
@@ -17,8 +18,7 @@ def recvImage():
         frame = drone.read()
         if frame is None or frame.size == 0:
             continue 
-        cv2.imshow('img', frame)
-        cv2.waitKey(1)
+        pose_estimation(frame, camera)
 
     cv2.destroyAllWindows()
 
