@@ -3,8 +3,30 @@ import cv2
 from cv2 import aruco
 from camera import Camera
 
+# ======================
+# ArUco marker coordinate
+# [Forward]
+#
+#         +z
+#       ------
+#       |    |
+#       |  B |  +x
+#       |    |
+#       ------
+#
+# [Downward]
+#
+#       ------
+#       |    |
+#    +y |  B |  
+#       |    |
+#       ------
+#         +x
+#
+# ======================
 
-ARUCO_SIDE_LENGTH = 0.0708 # in meters
+
+ARUCO_SIDE_LENGTH = 7.08 # in meters
 font = cv2.FONT_HERSHEY_SIMPLEX
 
 
