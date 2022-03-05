@@ -12,8 +12,14 @@ print('server start at: %s:%s' % (HOST, PORT))
 print('wait for connection...')
 
 while True:
+    print("======")
     indata, addr = s.recvfrom(1024)
     print('recvfrom ' + str(addr) + ': ' + indata.decode())
 
     outdata = 'echo ' + indata.decode()
     s.sendto(outdata.encode(), addr)
+
+    if (indata.decode() == "c"):
+        print("here")
+        s.close()
+        break
