@@ -17,6 +17,7 @@ camera = Camera()
 # recv image
 def recvImage():
     while keepread:
+        print("=========") # split line for distinguish each loop
         frame = drone.read()
         if frame is None or frame.size == 0:
             print("no image")
@@ -27,6 +28,7 @@ def recvImage():
             print("no aruco")
             continue 
 
+        print("aruco pose: %d, %d, %d" % (LP_pose[0][0], LP_pose[1][0], LP_pose[2][0]))
         global isControl
         if (isControl):
             control(drone, LP_pose)
