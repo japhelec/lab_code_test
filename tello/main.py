@@ -4,6 +4,7 @@ from pose_estimation import pose_estimation
 
 import cv2
 from threading import Thread
+from control import control
 import time
 import keyboard 
 
