@@ -5,14 +5,16 @@ from pose_estimation import pose_estimation
 import cv2
 from threading import Thread
 from control import control
-import time
 import keyboard 
+import socket
 
 
 keepread = True
 isControl = False
 drone = tello.Tello('', 8889)  
 camera = Camera()
+s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+s.bind(('0.0.0.0', 5566))
 
 # recv image
 def recvImage():
@@ -36,49 +38,42 @@ def recvImage():
     cv2.destroyAllWindows()
 
 # keyborad
-def recvkeybord(): 
+def recvkeybord():
+    print("server start listening for key events at PORT 5566...")         
     while True:
-        key = keyboard.read_key()
+        indata, addr = s.recvfrom(1024)
+        key = indata.decode()
 
         if key == "o": #takeoff
             drone.send_command("takeoff")
-            time.sleep(2)
         elif key == "v": #vision
             camera.switch_vision()
             drone.send_command("downvision " + str(camera.vision.value))
-            time.sleep(1)
         elif key == "i": #control switch
             global isControl
             isControl = not isControl
-            time.sleep(1)
         
 
         elif key == "w": #move forward
             drone.send_command("rc 0 30 0 0")
-            time.sleep(1)
         elif key == "a": #move left
             drone.send_command("rc -30 0 0 0")
-            time.sleep(1)
         elif key == "s": #move backward
             drone.send_command("rc 0 -30 0 0")
-            time.sleep(1)
         elif key == "d": #pause right
             drone.send_command("rc 30 0 0")
-            time.sleep(1)
         elif key == "q": #move up
             drone.send_command("rc 0 0 30 0")
-            time.sleep(1)
         elif key == "e": #move down
             drone.send_command("rc 0 0 -30 0")
-            time.sleep(1)
         elif key == "p": #pause
             drone.send_command("stop")
-            time.sleep(1)
 
         elif key == "l": #land
             drone.send_command("land")
             global keepread
             keepread = False
+            s.close()
             break
 
 
