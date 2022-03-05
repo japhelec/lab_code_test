@@ -13,6 +13,6 @@ while True:
     outdata = raw_input('please input message: ')
     print('sendto ' + str(server_addr) + ': ' + outdata)
     s.sendto(outdata.encode(), server_addr)
-    
-    indata, addr = s.recvfrom(1024)
-    print('recvfrom ' + str(addr) + ': ' + indata.decode())
+
+    if (outdata == "l"):
+        break
