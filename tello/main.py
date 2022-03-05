@@ -20,6 +20,7 @@ def recvImage():
             continue 
         
         LP_pose = pose_estimation(frame, camera)
+        control(drone, LP_pose)
         # print(LP_pose)
 
     cv2.destroyAllWindows()
