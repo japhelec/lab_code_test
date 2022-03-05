@@ -55,7 +55,8 @@ def pose_estimation(frame, camera):
             print("- original tvec ")
             print(tvec) # shape (1,1,3)
             print("- After CT ")
-            print(CT_Aruco_to_Body(camera.get_vision()).dot(tvec[0].T))
+            rtn = CT_Aruco_to_Body(camera.get_vision()).dot(tvec[0].T)
+            print(rtn)
             (rvec-tvec).any()
 
             for i in range(rvec.shape[0]):
@@ -63,6 +64,7 @@ def pose_estimation(frame, camera):
                 aruco.drawDetectedMarkers(frame, corners)
         
             cv2.putText(frame, "Id: " + str(ids), (0,64), font, 1, (0,255,0),2,cv2.LINE_AA)
+            return rtn
         else:
             CT = CT_Aruco_to_Body(camera.get_vision())
             return CT.dot(tvec[0].T)
