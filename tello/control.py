@@ -1,9 +1,11 @@
 import numpy as np
 
+CONTROL_SATURATION = 100
+
 P = np.array([
-    [0.6,0,0],
-    [0,0.6,0],
-    [0,0,0.5]
+    [1.5,0,0],
+    [0,1.5,0],
+    [0,0,1.5]
     ]) # shape (3,3)
 
 I = np.array([
@@ -25,8 +27,9 @@ def control(tello, lp):
     # lp is coordinate of landing pad relative to drone camera,
     F = P.dot(lp)
     F = np.floor(F)
+
+    np.clip(F, -CONTROL_SATURATION, CONTROL_SATURATION, out=F)
     
-    # tello.send_command("rc %d %d %d %d" % (F[0][0], F[1][0], F[2][0], 0))
-    
-    print("rc %d %d %d %d" % (F[0][0], F[1][0], F[2][0], 0))
+    tello.send_command("rc %d %d %d %d" % (F[0][0], F[1][0], F[2][0], 0))
+    # print("rc %d %d %d %d" % (F[0][0], F[1][0], F[2][0], 0))
     
