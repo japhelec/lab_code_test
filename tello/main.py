@@ -19,9 +19,13 @@ def recvImage():
     while keepread:
         frame = drone.read()
         if frame is None or frame.size == 0:
+            print("no image")
             continue 
         
         LP_pose = pose_estimation(frame, camera)
+        if LP_pose is None:
+            print("no aruco")
+            continue 
 
         global isControl
         if (isControl):

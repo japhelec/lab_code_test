@@ -26,5 +26,7 @@ def control(tello, lp):
     F = P.dot(lp)
     F = np.floor(F)
     
-    tello.send_command("rc %d %d %d %d" % (F[0][0], F[1][0], F[2][0], 0))
+    # tello.send_command("rc %d %d %d %d" % (F[0][0], F[1][0], F[2][0], 0))
+    
+    print("rc %d %d %d %d" % (F[0][0], F[1][0], F[2][0], 0))
     
