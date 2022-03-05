@@ -23,6 +23,7 @@ def recvImage():
         
         LP_pose = pose_estimation(frame, camera)
 
+        global isControl
         if (isControl):
             control(drone, LP_pose)
 
@@ -41,6 +42,7 @@ def recvkeybord():
             drone.send_command("downvision " + str(camera.vision.value))
             time.sleep(1)
         elif key == "i": #control switch
+            global isControl
             isControl = not isControl
             time.sleep(1)
         
