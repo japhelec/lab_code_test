@@ -3,9 +3,9 @@ import numpy as np
 CONTROL_SATURATION = 100
 
 P = np.array([
-    [1.5,0,0],
-    [0,1.5,0],
-    [0,0,1.5]
+    [0.6,0,0],
+    [0,0.6,0],
+    [0,0,0.4]
     ]) # shape (3,3)
 
 I = np.array([
