@@ -43,7 +43,7 @@ def recvImage():
 def recvkeybord():
     print("server start listening for key events at PORT 5566...")         
     while True:
-        indata, addr = s.recvfrom(1024)
+        indata, addr = s.recvfrom(1024) # blocking mode
         key = indata.decode()
 
         if key == "o": #takeoff
