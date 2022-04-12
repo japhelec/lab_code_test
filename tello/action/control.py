@@ -15,5 +15,5 @@ class Control:
 
         np.clip(F, -self.CONTROL_SATURATION, self.CONTROL_SATURATION, out=F)
 
-        return ("rc %d %d %d %d" % (F[0][0], F[1][0], F[2][0], 0))
+        return F
     
