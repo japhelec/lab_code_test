@@ -69,17 +69,14 @@ class Keyboard:
                 # =========================
                 elif key == "c": #control start
                     print(colored("[command] control!", "green"))
-                    self.view.set_save_mode(True)
-                    self.action.set_control_mode(True)
+                    self.act.set_control_mode(True)
                 elif key == "p": # control stop
                     print(colored("[command] stop!", "green"))
-                    self.view.set_save_mode(False)
-                    self.action.set_control_mode(False)
+                    self.act.set_control_mode(False)
                     self.drone.send_command("stop")
                 
                 elif key == "l": #land
                     print(colored("[command] land!", "green"))
-                    self.view.set_save_mode(False)
                     self.act.set_control_mode(False)
                     self.drone.send_command("land")
                     break

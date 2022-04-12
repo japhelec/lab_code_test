@@ -8,6 +8,9 @@ class CameraVision(Enum):
 class Camera():
     def __init__(self):
         # forward camera
+        self.front_frame_size = (720, 960, 3)
+        self.down_frame_size = (240, 320, 3)
+
         self.fc_dist = np.array(([[0.02622212, -0.55220608, -0.0034407, 0.00321558, 1.89103285]]))
 
         self.fc_mtx = np.array([[901.57301941  , 0.      ,   477.52938592],
