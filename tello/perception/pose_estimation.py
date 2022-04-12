@@ -1,7 +1,7 @@
 import numpy as np
 import cv2
 from cv2 import aruco
-from camera import CameraVision
+import tello.camera as camera
 from coordinateTransform import Rx, Ry, Rz
 
 # ======================
@@ -32,15 +32,15 @@ DEBUG = False # whether show frame
 font = cv2.FONT_HERSHEY_SIMPLEX
 
 def CT_Aruco_to_Body(vision):
-    if (vision == CameraVision.FORWARDVISION):
+    if (vision == camera.CameraVision.FORWARDVISION):
         return Rx(-90)
-    elif (vision == CameraVision.DOWNVISION):
+    elif (vision == camera.CameraVision.DOWNVISION):
         return Rx(180).dot(Rz(90))
 
 
 
 
-def pose_estimation(frame, camera):
+def get_pose(frame, cam):
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     aruco_dict = aruco.Dictionary_get(aruco.DICT_6X6_250)
     parameters =  aruco.DetectorParameters_create()
@@ -49,15 +49,15 @@ def pose_estimation(frame, camera):
     corners, ids, rejectedImgPoints = aruco.detectMarkers(gray,aruco_dict,parameters=parameters)
     if ids is not None:
         
-        rvec, tvec, _ = aruco.estimatePoseSingleMarkers(corners, ARUCO_SIDE_LENGTH, camera.get_mtx(), camera.get_dist())
+        rvec, tvec, _ = aruco.estimatePoseSingleMarkers(corners, ARUCO_SIDE_LENGTH, cam.get_mtx(), cam.get_dist())
         
-        CT = CT_Aruco_to_Body(camera.get_vision())
+        CT = CT_Aruco_to_Body(cam.get_vision())
         
         if (DEBUG):
             (rvec-tvec).any()
 
             for i in range(rvec.shape[0]):
-                aruco.drawAxis(frame, camera.get_mtx(), camera.get_dist(), rvec[i, :, :], tvec[i, :, :], 0.03)
+                aruco.drawAxis(frame, cam.get_mtx(), cam.get_dist(), rvec[i, :, :], tvec[i, :, :], 0.03)
                 aruco.drawDetectedMarkers(frame, corners)
         
             cv2.putText(frame, "Id: " + str(ids), (0,64), font, 1, (0,255,0),2,cv2.LINE_AA)

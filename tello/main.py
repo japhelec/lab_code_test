@@ -1,46 +1,46 @@
+import cv2
+import socket
+from threading import Thread
 from termcolor import colored
 
-import sdk as tello
-from camera import Camera
-from pose_estimation import pose_estimation
+from tello import sdk
+from tello import camera as cam
 
-import cv2
-from threading import Thread
 from control import control
-import keyboard 
-import socket
+from perception import pose_estimation as pose
 
 
 keepread = True
 isControl = False
-drone = tello.Tello('', 8889)  
-camera = Camera()
+drone = sdk.Tello('', 8889)  
+camera = cam.Camera()
 s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 s.bind(('0.0.0.0', 5566))
 
 # recv image
 def recvImage():
+    global isControl
     while keepread:
-        print("=========") # split line for distinguish each loop
         frame = drone.read()
         if frame is None or frame.size == 0:
             # print("no image")
             continue 
         
-        LP_pose = pose_estimation(frame, camera)
+        LP_pose = pose.get_pose(frame, camera)
         if LP_pose is None:
             # print("no aruco")
             continue 
 
-        print("aruco pose: %d, %d, %d" % (LP_pose[0][0], LP_pose[1][0], LP_pose[2][0]))
-        global isControl
+        print(colored("aruco pose: %d, %d, %d" % (LP_pose[0][0], LP_pose[1][0], LP_pose[2][0]), "yellow"))
         if (isControl):
-            control(drone, LP_pose)
+            control.control(drone, LP_pose)
 
     cv2.destroyAllWindows()
 
 # keyborad
 def recvkeybord():
+    global isControl
+    global keepread
     print("server start listening for key events at PORT 5566...")         
     while True:
         indata, addr = s.recvfrom(1024) # blocking mode
@@ -48,17 +48,8 @@ def recvkeybord():
 
         if key == "o": #takeoff
             print(colored("[command] takeoff!", "green"))
-            drone.send_command("takeoff")
-        elif key == "v": #vision
-            print(colored("[command] vision!", "green"))
-            camera.switch_vision()
-            drone.send_command("downvision " + str(camera.vision.value))
-        elif key == "i": #control switch
-            print(colored("[command] control!", "green"))
-            global isControl
-            isControl = not isControl
+            drone.send_command("takeoff")        
         
-
         elif key == "w": #move forward
             print(colored("[command] move forward!", "green"))
             drone.send_command("rc 0 30 0 0")
@@ -77,26 +68,37 @@ def recvkeybord():
         elif key == "e": #move down
             print(colored("[command] move down!", "green"))
             drone.send_command("rc 0 0 -30 0")
-        elif key == "p": #pause
-            print(colored("[command] stop!", "green"))
-            drone.send_command("stop")
+
+
+        elif key == "c": #control switch
+            if (isControl):
+                print(colored("[command] stop!", "green"))
+                drone.send_command("stop")
+            else:
+                print(colored("[command] control!", "green"))
+            isControl = not isControl
+
+        elif key == "v": #vision
+            print(colored("[command] vision!", "green"))
+            camera.switch_vision()
+            drone.send_command("downvision " + str(camera.vision.value))
 
         elif key == "l": #land
             print(colored("[command] land!", "green"))
-            drone.send_command("land")
-            global keepread
+            isControl = not isControl
             keepread = False
+            drone.send_command("land")
             s.close()
             break
 
 
 
 
-# tImage = Thread(target=recvImage)
-# tImage.start() 
+tImage = Thread(target=recvImage)
+tImage.start() 
 
 tKeyboard = Thread(target=recvkeybord)
 tKeyboard.start()
 
-# tImage.join()
+tImage.join()
 print("Tello control end")

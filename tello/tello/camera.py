@@ -43,14 +43,3 @@ class Camera():
             return self.fc_dist
         elif self.vision == CameraVision.DOWNVISION:
             return self.dc_dist
-    
-
-
-
-
-
-
-
-
-
-
