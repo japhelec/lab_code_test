@@ -17,7 +17,7 @@ class Action:
         now = datetime.now()
         dt_string = now.strftime("%Y%m%d_%H:%M:%S")
 
-        self.f_if_pose = open(os.path.dirname(__file__) + "/../record/pose_record_" + dt_string + ".txt", "a")
+        self.f_if_pose = open(os.path.dirname(__file__) + "/../record/pose_record_" + dt_string + ".csv", "a")
         self.f_if_pose.write("x,y,z\n")
 
 
