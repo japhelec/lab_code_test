@@ -3,6 +3,8 @@ import threading
 import time
 import numpy as np
 import libh264decoder
+from tello import camera as cam
+
 
 class Tello:
     """Wrapper class to interact with the Tello drone."""
@@ -20,7 +22,7 @@ class Tello:
         :param tello_ip (str): Tello IP.
         :param tello_port (int): Tello port.
         """
-
+        self.camera = cam.Camera()
         self.abort_flag = False
         self.decoder = libh264decoder.H264Decoder()
         self.command_timeout = command_timeout
