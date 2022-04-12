@@ -1,3 +1,4 @@
+import cv2
 import threading
 import numpy as np
 import os
@@ -7,6 +8,7 @@ from datetime import datetime
 
 from control import Control
 from perception import Perception
+
 
 class Action:
     def __init__(self, drone):
@@ -21,6 +23,8 @@ class Action:
         self.f_if_pose.write("x,y,z\n")
         self.f_if_control = open(os.path.dirname(__file__) + "/../record/control/control_record_" + dt_string + ".csv", "a")
         self.f_if_control.write("roll,pitch,thrust,yaw\n")
+        fourcc = cv2.VideoWriter_fourcc(*'XVID')
+        self.video = cv2.VideoWriter(os.path.dirname(__file__) + "/../record/video/video_record_" + dt_string + ".avi", fourcc, 1.0, (960,720))
 
 
         self.toControl = False
@@ -30,6 +34,8 @@ class Action:
 
     def __del__(self):
         self.f_if_pose.close()
+        self.f_if_control.close()
+        self.video.release()
 
     def _feedback_thread(self):
         while True:
@@ -37,9 +43,10 @@ class Action:
             frame = self.drone.read()
             if frame is None or frame.size == 0:  # add black frame
                 if (self.drone.camera.get_vision().value == 0) :
-                    frame = np.zeros(self.drone.camera.front_frame_size, dtype='uint8')
+                    frame = np.zeros((self.drone.camera.front_frame_size), dtype='uint8') # opencv and numpy dimension reverse
                 else:
                     frame = np.zeros(self.drone.camera.down_frame_size, dtype='uint8')
+            print("frame: ", frame.shape)
             
             # get pose
             pose = self.perception.get_pose(frame)
@@ -56,14 +63,20 @@ class Action:
                 command = self.control.pid(pose)
             
             # Save?
-            print("pose: ", pose)
+            # print("pose: ", pose)
             if (self.toControl):
                 self.f_if_control.write("%d,%d,%d,%d\n" % (command[0][0], command[1][0], command[2][0], 0))
                 self.f_if_pose.write("%f,%f,%f\n" % (pose[0][0], pose[1][0], pose[2][0]))
+                self.video.write(frame)
                 # self.drone.send_command("rc %d %d %d %d" % (command[0][0], command[1][0], command[2][0], 0))
 
     
     def set_control_mode(self, mode):
+        if (self.get_control_mode() and (not mode)):
+            self.f_if_pose.close()
+            self.f_if_control.close()
+            self.video.release()
+
         self.toControl = mode
 
     def get_control_mode(self):
