@@ -62,6 +62,9 @@ class Keyboard:
                     print(colored("[command] vision!", "green"))
                     self.drone.camera.switch_vision()
                     self.drone.send_command("downvision " + str(self.drone.camera.vision.value))
+                elif key == "h": #hover
+                    print(colored("[command] hover!", "green"))
+                    self.drone.send_command("rc 0 0 0 0")
                 
 
                 # =========================

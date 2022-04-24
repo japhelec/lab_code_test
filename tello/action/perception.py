@@ -28,7 +28,7 @@ from coordinate import Rx, Ry, Rz
 class Perception:
     def __init__(self, camera):
         self.camera = camera
-        self.ARUCO_SIDE_LENGTH = 7.08 # in meters
+        self.ARUCO_SIDE_LENGTH = 17.5 # in meters
         # self.DEBUG = False # whether show frame
         # font = cv2.FONT_HERSHEY_SIMPLEX
 
