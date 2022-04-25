@@ -1,3 +1,4 @@
 Tello_SDK/
 *.pyc
 test/
+tello/record/
