@@ -4,6 +4,8 @@ import time
 import numpy as np
 import libh264decoder
 from tello import camera as cam
+from termcolor import colored
+from datetime import datetime
 
 
 class Tello:
@@ -49,6 +51,9 @@ class Tello:
         print ('sent: command')
         self.socket.sendto(b'streamon', self.tello_address)
         print ('sent: streamon')
+        # self.socket.sendto(b'setfps low', self.tello_address)
+        # print ('sent: setfps')
+
 
         self.socket_video.bind((local_ip, self.local_video_port))
 
@@ -99,6 +104,9 @@ class Tello:
         """
         packet_data = ""
         while True:
+            # now = datetime.now()
+            # dt_string = now.strftime("%Y%m%d_%H:%M:%S")
+            # print(colored("[image] " + dt_string, "green"))
             try:
                 res_string, ip = self.socket_video.recvfrom(2048)
                 packet_data += res_string
@@ -148,11 +156,11 @@ class Tello:
 
         self.socket.sendto(command.encode('utf-8'), self.tello_address)
 
-        timer.start()
-        while self.response is None:
-            if self.abort_flag is True:
-                break
-        timer.cancel()
+        # timer.start()
+        # while self.response is None:
+        #     if self.abort_flag is True:
+        #         break
+        # timer.cancel()
         
         if self.response is None:
             response = 'none_response'

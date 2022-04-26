@@ -3,7 +3,7 @@ import numpy as np
 class Control:
     def __init__(self):
         self.CONTROL_SATURATION = 100
-        self.P = np.array([[1.5,0,0],[0,1.5,0],[0,0,0]]) # shape (3,3)
+        self.P = np.array([[1.2,0,0],[0,1.2,0],[0,0,0]]) # shape (3,3)
         self.I = np.array([[1,0,0],[0,1,0],[0,0,1]]) # shape (3,3)
         self.D = np.array([[1,0,0],[0,1,0],[0,0,1]]) # shape (3,3)
 

@@ -35,7 +35,7 @@ class Action:
         self.f_if_control = open(os.path.dirname(__file__) + "/../record/control/control_record_" + dt_string + ".csv", "a")
         self.f_if_control.write("roll,pitch,thrust,yaw\n")
         fourcc = cv2.VideoWriter_fourcc(*'XVID')
-        self.video = cv2.VideoWriter(os.path.dirname(__file__) + "/../record/video/video_record_" + dt_string + ".avi", fourcc, 10.0, (960,720))
+        self.video = cv2.VideoWriter(os.path.dirname(__file__) + "/../record/video/video_record_" + dt_string + ".avi", fourcc, 10.0, (320,240))
 
 
         self.toControl = False
@@ -49,7 +49,10 @@ class Action:
         self.video.release()
 
     def _feedback_thread(self):
+        print('============================================')
+        print('1: ', datetime.now())
         frame = self.drone.read()
+        print('2: ', datetime.now())
         if frame is None or frame.size == 0:  # add black frame
             if (self.drone.camera.get_vision().value == 0) :
                 frame = np.zeros((self.drone.camera.front_frame_size), dtype='uint8') # opencv and numpy dimension reverse
@@ -58,10 +61,10 @@ class Action:
         
         # get pose
         pose = self.perception.get_pose(frame)
+        print('3: ', datetime.now())
         isPoseNone = False
         if pose is None:
             isPoseNone = True
-            # pose = np.array([[-999],[-999],[-999]])
             print("[pose]: NO")
         else: 
             print("[pose]: ", pose)
@@ -69,12 +72,12 @@ class Action:
         # get control
         command = 0
         if (isPoseNone):
-            # command = np.array([[-999],[-999],[-999]])
             print("[command]: NO")
         else:
             command = self.control.pid(pose)
             self.last_command = command
             print("[command]: ", command)
+        print('4: ', datetime.now())
 
         
         # Save?
@@ -83,12 +86,21 @@ class Action:
             if (isPoseNone):
                 self.f_if_control.write("%d,%d,%d,%d\n" % (self.last_command[0][0], self.last_command[1][0], self.last_command[2][0], 0))
                 self.f_if_pose.write("N/A,N/A,N/A\n")
-                # self.drone.send_command("rc %d %d %d %d" % (self.last_command[0][0], self.last_command[1][0], self.last_command[2][0], 0))
+                print('5: ', datetime.now())
+                response = self.drone.send_command("rc %d %d %d %d" % (self.last_command[0][0], self.last_command[1][0], self.last_command[2][0], 0))
+                # response = self.drone.send_command("rc %d %d %d %d" % (0, 0, 0, 0))
+                # print('response: ', response);
+                print('6: ', datetime.now())
             else:
                 self.f_if_control.write("%d,%d,%d,%d\n" % (command[0][0], command[1][0], command[2][0], 0))
                 self.f_if_pose.write("%f,%f,%f\n" % (pose[0][0], pose[1][0], pose[2][0]))
-                # self.drone.send_command("rc %d %d %d %d" % (command[0][0], command[1][0], command[2][0], 0))
+                print('5: ', datetime.now())
+                response = self.drone.send_command("rc %d %d %d %d" % (command[0][0], command[1][0], command[2][0], 0))
+                # response = self.drone.send_command("rc %d %d %d %d" % (0, 0, 0, 0))
+                # print('response: ', response);
+                print('6: ', datetime.now())
             self.video.write(frame)
+            print('7: ', datetime.now())
 
     
     def set_control_mode(self, mode):
