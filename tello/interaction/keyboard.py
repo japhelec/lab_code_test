@@ -31,7 +31,9 @@ class Keyboard:
         while True:
             try:
                 indata, addr = self.socket.recvfrom(1024) # blocking mode
-                key = indata.decode()
+                plainData = indata.decode()
+                key = plainData[0]
+                subcommand = plainData[2:]
 
 
                 # =========================
@@ -40,24 +42,9 @@ class Keyboard:
                 if key == "o": #takeoff
                     print(colored("[command] takeoff!", "green"))
                     self.drone.send_command("takeoff")        
-                elif key == "w": #move forward
-                    print(colored("[command] move forward!", "green"))
-                    self.drone.send_command("rc 0 10 0 0")
-                elif key == "a": #move left
-                    print(colored("[command] move left!", "green"))
-                    self.drone.send_command("rc -10 0 0 0")
-                elif key == "s": #move backward
-                    print(colored("[command] move backward!", "green"))
-                    self.drone.send_command("rc 0 -10 0 0")
-                elif key == "d": #pause right
-                    print(colored("[command] move right!", "green"))
-                    self.drone.send_command("rc 10 0 0")
-                elif key == "q": #move up
-                    print(colored("[command] move up!", "green"))
-                    self.drone.send_command("rc 0 0 10 0")
-                elif key == "e": #move down
-                    print(colored("[command] move down!", "green"))
-                    self.drone.send_command("rc 0 0 -10 0")
+                elif key == "m": #move x direction
+                    print(colored("[command] move x!", "green"))
+                    self.drone.send_command("rc " + subcommand)
                 elif key == "v": #vision
                     print(colored("[command] vision!", "green"))
                     self.drone.camera.switch_vision()

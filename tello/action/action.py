@@ -77,6 +77,7 @@ class Action:
                 print("[command]: ", command)
             print('4: ', datetime.now())
 
+            # command = np.array([[0],[0],[0]])
             
             # Save?
             # print("pose: ", pose)
@@ -85,16 +86,16 @@ class Action:
                     self.f_if_control.write("%d,%d,%d,%d\n" % (self.last_command[0][0], self.last_command[1][0], self.last_command[2][0], 0))
                     self.f_if_pose.write("N/A,N/A,N/A\n")
                     print('5: ', datetime.now())
-                    # response = self.drone.send_command("rc %d %d %d %d" % (self.last_command[0][0], self.last_command[1][0], self.last_command[2][0], 0))
-                    response = self.drone.send_command("rc %d %d %d %d" % (0, 0, 0, 0))
+                    response = self.drone.send_command("rc %d %d %d %d" % (self.last_command[0][0], self.last_command[1][0], self.last_command[2][0], 0))
+                    # response = self.drone.send_command("rc %d %d %d %d" % (0, 0, 0, 0))
                     # print('response: ', response);
                     print('6: ', datetime.now())
                 else:
                     self.f_if_control.write("%d,%d,%d,%d\n" % (command[0][0], command[1][0], command[2][0], 0))
                     self.f_if_pose.write("%f,%f,%f\n" % (pose[0][0], pose[1][0], pose[2][0]))
                     print('5: ', datetime.now())
-                    # response = self.drone.send_command("rc %d %d %d %d" % (command[0][0], command[1][0], command[2][0], 0))
-                    response = self.drone.send_command("rc %d %d %d %d" % (0, 0, 0, 0))
+                    response = self.drone.send_command("rc %d %d %d %d" % (command[0][0], command[1][0], command[2][0], 0))
+                    # response = self.drone.send_command("rc %d %d %d %d" % (0, 0, 0, 0))
                     # print('response: ', response);
                     print('6: ', datetime.now())
                 self.video.write(frame)
