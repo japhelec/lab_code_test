@@ -28,7 +28,7 @@ from coordinate import Rx, Ry, Rz
 class Perception:
     def __init__(self, camera):
         self.camera = camera
-        self.ARUCO_SIDE_LENGTH = 17.5 # in meters
+        self.ARUCO_SIDE_LENGTH = 7.08 # in cm
         # self.DEBUG = False # whether show frame
         # font = cv2.FONT_HERSHEY_SIMPLEX
 
@@ -49,6 +49,8 @@ class Perception:
         if ids is not None:    
             rvec, tvec, _ = aruco.estimatePoseSingleMarkers(corners, self.ARUCO_SIDE_LENGTH, self.camera.get_mtx(), self.camera.get_dist())
             CT = self._CT_Aruco_to_Body()
+            # print('********************************************')
+            # print("aruco: ", tvec)
             
             # ============= post processing ================
             # if (DEBUG):

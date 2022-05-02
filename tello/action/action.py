@@ -47,10 +47,10 @@ class Action:
     def _feedback_thread(self):
         while (1):
             time.sleep(0.1 - ((time.time() - self.starttime) % 0.1))
-            print('============================================')
-            print('1: ', datetime.now())
+            # print('============================================')
+            # print('1: ', datetime.now())
             frame = self.drone.read()
-            print('2: ', datetime.now())
+            # print('2: ', datetime.now())
             if frame is None or frame.size == 0:  # add black frame
                 if (self.drone.camera.get_vision().value == 0) :
                     frame = np.zeros((self.drone.camera.front_frame_size), dtype='uint8') # opencv and numpy dimension reverse
@@ -59,13 +59,13 @@ class Action:
             
             # get pose
             pose = self.perception.get_pose(frame)
-            print('3: ', datetime.now())
+            # print('3: ', datetime.now())
             isPoseNone = False
             if pose is None:
                 isPoseNone = True
                 print("[pose]: NO")
-            else: 
-                print("[pose]: ", pose)
+            # else: 
+                # print("[pose]: ", pose)
 
             # get control
             command = 0
@@ -74,8 +74,8 @@ class Action:
             else:
                 command = self.control.pid(pose)
                 self.last_command = command
-                print("[command]: ", command)
-            print('4: ', datetime.now())
+                # print("[command]: ", command)
+            # print('4: ', datetime.now())
 
             # command = np.array([[0],[0],[0]])
             
@@ -85,21 +85,21 @@ class Action:
                 if (isPoseNone):
                     self.f_if_control.write("%d,%d,%d,%d\n" % (self.last_command[0][0], self.last_command[1][0], self.last_command[2][0], 0))
                     self.f_if_pose.write("N/A,N/A,N/A\n")
-                    print('5: ', datetime.now())
-                    response = self.drone.send_command("rc %d %d %d %d" % (self.last_command[0][0], self.last_command[1][0], self.last_command[2][0], 0))
-                    # response = self.drone.send_command("rc %d %d %d %d" % (0, 0, 0, 0))
+                    # print('5: ', datetime.now())
+                    # response = self.drone.send_command("rc %d %d %d %d" % (self.last_command[0][0], self.last_command[1][0], self.last_command[2][0], 0))
+                    response = self.drone.send_command("rc %d %d %d %d" % (0, 0, 0, 0))
                     # print('response: ', response);
-                    print('6: ', datetime.now())
+                    # print('6: ', datetime.now())
                 else:
                     self.f_if_control.write("%d,%d,%d,%d\n" % (command[0][0], command[1][0], command[2][0], 0))
                     self.f_if_pose.write("%f,%f,%f\n" % (pose[0][0], pose[1][0], pose[2][0]))
-                    print('5: ', datetime.now())
-                    response = self.drone.send_command("rc %d %d %d %d" % (command[0][0], command[1][0], command[2][0], 0))
-                    # response = self.drone.send_command("rc %d %d %d %d" % (0, 0, 0, 0))
+                    # print('5: ', datetime.now())
+                    # response = self.drone.send_command("rc %d %d %d %d" % (command[0][0], command[1][0], command[2][0], 0))
+                    response = self.drone.send_command("rc %d %d %d %d" % (0, 0, 0, 0))
                     # print('response: ', response);
-                    print('6: ', datetime.now())
+                    # print('6: ', datetime.now())
                 self.video.write(frame)
-                print('7: ', datetime.now())
+                # print('7: ', datetime.now())
 
     
     def set_control_mode(self, mode):

@@ -4,6 +4,7 @@ import time
 import numpy as np
 import libh264decoder
 from tello import camera as cam
+from tello import telloState as TS
 from termcolor import colored
 from datetime import datetime
 
@@ -31,12 +32,15 @@ class Tello:
         self.imperial = imperial
         self.response = None  
         self.frame = None  # numpy array BGR -- current camera output frame
+        self.state = TS.TelloState()
         self.is_freeze = False  # freeze current camera output
         self.last_frame = None
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)  # socket for sending cmd
         self.socket_video = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)  # socket for receiving video stream
+        self.socket_state = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)  # socket for receiving video stream
         self.tello_address = (tello_ip, tello_port)
         self.local_video_port = 11111  # port for receiving video stream
+        self.local_state_port = 8890  # port for receiving video stream
         self.last_height = 0
         self.socket.bind((local_ip, local_port))
 
@@ -51,17 +55,25 @@ class Tello:
         print ('sent: command')
         self.socket.sendto(b'streamon', self.tello_address)
         print ('sent: streamon')
+        self.socket.sendto(b'moff', self.tello_address)
+        print ('sent: moff')
         # self.socket.sendto(b'setfps low', self.tello_address)
         # print ('sent: setfps')
 
 
         self.socket_video.bind((local_ip, self.local_video_port))
+        self.socket_state.bind((local_ip, self.local_state_port))
 
         # thread for receiving video
         self.receive_video_thread = threading.Thread(target=self._receive_video_thread)
         self.receive_video_thread.daemon = True
-
         self.receive_video_thread.start()
+
+        # thread for receiving state
+        self.receive_state_thread = threading.Thread(target=self._receive_state_thread)
+        self.receive_state_thread.daemon = True
+        self.receive_state_thread.start()
+
 
     def __del__(self):
         """Closes the local socket."""
@@ -92,6 +104,22 @@ class Tello:
             try:
                 self.response, ip = self.socket.recvfrom(3000)
                 #print(self.response)
+            except socket.error as exc:
+                print ("Caught exception socket.error : %s" % exc)
+
+    def _receive_state_thread(self):
+        """
+        Listens for state from Tello.
+
+        Runs as a thread, sets self.state to the most recent frame Tello captured.
+
+        """
+        while True:
+            try:
+                stateStr, ip = self.socket_state.recvfrom(3000)
+                print(stateStr)
+                self.state.set(stateStr)
+                self.state.show()
             except socket.error as exc:
                 print ("Caught exception socket.error : %s" % exc)
 
