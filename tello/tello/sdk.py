@@ -117,7 +117,6 @@ class Tello:
         while True:
             try:
                 stateStr, ip = self.socket_state.recvfrom(3000)
-                print(stateStr)
                 self.state.set(stateStr)
                 self.state.show()
             except socket.error as exc:

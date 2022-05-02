@@ -27,7 +27,7 @@ class Action:
         dt_string = now.strftime("%Y%m%d_%H:%M:%S")
 
         self.f_if_pose = open(os.path.dirname(__file__) + "/../record/pose/pose_record_" + dt_string + ".csv", "a")
-        self.f_if_pose.write("x,y,z\n")
+        self.f_if_pose.write("x,y,z,roll,pitch,yaw,vx,vy,vz,ax,ay,az\n")
         self.f_if_control = open(os.path.dirname(__file__) + "/../record/control/control_record_" + dt_string + ".csv", "a")
         self.f_if_control.write("roll,pitch,thrust,yaw\n")
         fourcc = cv2.VideoWriter_fourcc(*'XVID')
@@ -84,7 +84,7 @@ class Action:
             if (self.toControl):
                 if (isPoseNone):
                     self.f_if_control.write("%d,%d,%d,%d\n" % (self.last_command[0][0], self.last_command[1][0], self.last_command[2][0], 0))
-                    self.f_if_pose.write("N/A,N/A,N/A\n")
+                    self.f_if_pose.write("NaN,NaN,NaN,%d,%d,%d,%d,%d,%d,%f,%f,%f\n"%(self.drone.state.roll, self.drone.state.pitch, self.drone.state.yaw, self.drone.state.v_x, self.drone.state.v_y, self.drone.state.v_z, self.drone.state.a_x, self.drone.state.a_y, self.drone.state.a_z))
                     # print('5: ', datetime.now())
                     # response = self.drone.send_command("rc %d %d %d %d" % (self.last_command[0][0], self.last_command[1][0], self.last_command[2][0], 0))
                     response = self.drone.send_command("rc %d %d %d %d" % (0, 0, 0, 0))
@@ -92,7 +92,7 @@ class Action:
                     # print('6: ', datetime.now())
                 else:
                     self.f_if_control.write("%d,%d,%d,%d\n" % (command[0][0], command[1][0], command[2][0], 0))
-                    self.f_if_pose.write("%f,%f,%f\n" % (pose[0][0], pose[1][0], pose[2][0]))
+                    self.f_if_pose.write("%f,%f,%f,%d,%d,%d,%d,%d,%d,%f,%f,%f\n" % (pose[0][0], pose[1][0], pose[2][0],self.drone.state.roll, self.drone.state.pitch, self.drone.state.yaw, self.drone.state.v_x, self.drone.state.v_y, self.drone.state.v_z, self.drone.state.a_x, self.drone.state.a_y, self.drone.state.a_z))
                     # print('5: ', datetime.now())
                     # response = self.drone.send_command("rc %d %d %d %d" % (command[0][0], command[1][0], command[2][0], 0))
                     response = self.drone.send_command("rc %d %d %d %d" % (0, 0, 0, 0))
