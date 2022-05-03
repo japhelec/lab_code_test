@@ -39,7 +39,7 @@ class Perception:
     def __init__(self, camera, telloState):
         self.camera = camera
         self.telloState = telloState
-        self.ARUCO_SIDE_LENGTH = 7.08 # in cm
+        self.ARUCO_SIDE_LENGTH = 17.5 # in cm
         # self.DEBUG = False # whether show frame
         # font = cv2.FONT_HERSHEY_SIMPLEX
 

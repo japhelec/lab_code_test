@@ -2,8 +2,8 @@ import numpy as np
 
 class Control:
     def __init__(self):
-        self.CONTROL_SATURATION = 30
-        self.P = np.array([[2.2,0,0],[0,2.2,0],[0,0,0]]) # shape (3,3)
+        self.CONTROL_SATURATION = 100
+        self.P = np.array([[2,0,0],[0,2,0],[0,0,0]]) # shape (3,3)
         self.I = np.array([[1,0,0],[0,1,0],[0,0,1]]) # shape (3,3)
         self.D = np.array([[1,0,0],[0,1,0],[0,0,1]]) # shape (3,3)
 
