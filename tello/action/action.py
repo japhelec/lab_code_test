@@ -18,7 +18,7 @@ class Action:
     def __init__(self, drone):
         self.drone = drone
         self.control = Control()
-        self.perception = Perception(drone.camera)
+        self.perception = Perception(drone.camera, drone.state)
         
         self.last_command = np.array([[0],[0],[0]])
         self.starttime = time.time()
@@ -64,8 +64,8 @@ class Action:
             if pose is None:
                 isPoseNone = True
                 print("[pose]: NO")
-            # else: 
-                # print("[pose]: ", pose)
+            else: 
+                print("[pose]: ", pose)
 
             # get control
             command = 0

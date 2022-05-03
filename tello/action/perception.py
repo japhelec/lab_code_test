@@ -1,10 +1,10 @@
 import numpy as np
 import cv2
 from cv2 import aruco
-from coordinate import Rx, Ry, Rz
+from coordinate import Rx, Ry, Rz, Tr
 
 # ======================
-# ArUco marker coordinate
+# Camera Coordinate
 # [Forward]
 #
 #         +z
@@ -23,20 +23,46 @@ from coordinate import Rx, Ry, Rz
 #       ------
 #         +x
 #
+# Body Coordinate
+# [Forward]
+#
+#         +y
+#       ------
+#       |    |
+#       |  B |  +x
+#       |    |
+#       ------
+#
 # ======================
 
 class Perception:
-    def __init__(self, camera):
+    def __init__(self, camera, telloState):
         self.camera = camera
+        self.telloState = telloState
         self.ARUCO_SIDE_LENGTH = 7.08 # in cm
         # self.DEBUG = False # whether show frame
         # font = cv2.FONT_HERSHEY_SIMPLEX
 
-    def _CT_Aruco_to_Body(self):
+    def _RT_Camera_to_Body(self):
         if (self.camera.get_vision().value  == 0): # Forward vision
             return Rx(-90)
         elif (self.camera.get_vision().value == 1): # Downward vision
             return Rx(180).dot(Rz(90))
+
+    def _RT_Camera_to_Body(self):
+        if (self.camera.get_vision().value  == 0): # Forward vision
+            return Rx(-90)
+        elif (self.camera.get_vision().value == 1): # Downward vision
+            return Rx(180).dot(Rz(90))
+
+    def _LT_Camera_to_Body(self):
+        if (self.camera.get_vision().value  == 0): # Forward vision
+            return Tr(0, 3.2, 0) #3.2
+        elif (self.camera.get_vision().value == 1): # Downward vision
+            return Tr(0, -1.5, 0) #1.5
+
+    def _CT_Body_to_Erect(self):
+        return Rx(self.telloState.pitch).dot(Ry(self.telloState.roll))
 
     def get_pose(self, frame):
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
@@ -48,7 +74,9 @@ class Perception:
 
         if ids is not None:    
             rvec, tvec, _ = aruco.estimatePoseSingleMarkers(corners, self.ARUCO_SIDE_LENGTH, self.camera.get_mtx(), self.camera.get_dist())
-            CT = self._CT_Aruco_to_Body()
+            rt_C2B = self._RT_Camera_to_Body() # rotation transform from camera to body
+            lt_C2B = self._LT_Camera_to_Body() # translation transform from camera to body
+            ct_B2E = self._CT_Body_to_Erect() # coordinate transform from body to 
             # print('********************************************')
             # print("aruco: ", tvec)
             
@@ -64,7 +92,7 @@ class Perception:
             #     cv2.imshow("frame",frame)
             #     cv2.waitKey(1)
 
-            return CT.dot(tvec[0].T)
+            return ct_B2E.dot(lt_C2B + rt_C2B.dot(tvec[0].T))
             
 
         else:
