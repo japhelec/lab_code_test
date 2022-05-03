@@ -73,6 +73,7 @@ class Action:
                 print("[command]: NO")
             else:
                 command = self.control.pid(pose)
+                command = np.rint(command)
                 self.last_command = command
                 # print("[command]: ", command)
             # print('4: ', datetime.now())
