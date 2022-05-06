@@ -5,6 +5,22 @@ import time
 import threading
 
 
+common_command = {}
+common_command["id"] = {}
+common_command["id"]["h"] = "rc 0 0 0 0"
+common_command["id"]["x"] = {}
+common_command["id"]["y"] = {}
+common_command["id"]["z"] = {}
+common_command["id"]["t"] = {}
+common_command["id"]["x"]["p"] = "rc 20 0 0 0"
+common_command["id"]["x"]["n"] = "rc -20 0 0 0"
+common_command["id"]["y"]["p"] = "rc 0 20 0 0"
+common_command["id"]["y"]["n"] = "rc 0 -20 0 0"
+common_command["id"]["z"]["p"] = "rc 0 0 20 0"
+common_command["id"]["z"]["n"] = "rc 0 0 -20 0"
+common_command["id"]["t"]["p"] = "rc 0 0 0 10"
+common_command["id"]["t"]["n"] = "rc 0 0 0 -10"
+
 class UDPClient:
     def __init__(self):
         self.starttime = time.time()
@@ -31,13 +47,13 @@ class UDPClient:
                 count = 0
                 while (1):
                     if (count <self.id_count):
-                        self.s.sendto("rc 3 0 0 0".encode(), self.server_addr)
+                        self.s.sendto(common_command["id"][mode]["p"].encode(), self.server_addr)
                         time.sleep(self.id_interval - ((time.time() - self.starttime) % self.id_interval))
-                        self.s.sendto("rc 0 0 0 0".encode(), self.server_addr)
+                        self.s.sendto(common_command["id"]["h"].encode(), self.server_addr)
                         time.sleep(self.id_interval - ((time.time() - self.starttime) % self.id_interval))
-                        self.s.sendto("rc -3 0 0 0".encode(), self.server_addr)
+                        self.s.sendto(common_command["id"][mode]["n"].encode(), self.server_addr)
                         time.sleep(self.id_interval - ((time.time() - self.starttime) % self.id_interval))
-                        self.s.sendto("rc 0 0 0 0".encode(), self.server_addr)
+                        self.s.sendto(common_command["id"]["h"].encode(), self.server_addr)
                         time.sleep(self.id_interval - ((time.time() - self.starttime) % self.id_interval))
                         count += 1
                     else: 
