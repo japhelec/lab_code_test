@@ -16,10 +16,12 @@ while True:
     indata, addr = s.recvfrom(1024)
     print('recvfrom ' + str(addr) + ': ' + indata.decode())
 
-    outdata = 'echo ' + indata.decode()
-    s.sendto(outdata.encode(), addr)
+    # outdata = 'echo ' + indata.decode()
+    # s.sendto(outdata.encode(), addr)
+    
+    plainData = indata.decode()
 
-    if (indata.decode() == "c"):
+    if (plainData[0] == "l"):
         print("here")
         s.close()
         break
