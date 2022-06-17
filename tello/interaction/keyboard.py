@@ -45,6 +45,7 @@ class Keyboard:
                 elif key == "m": #move x direction
                     print(colored("[command] move x!", "green"))
                     self.drone.send_command("rc " + subcommand)
+                    self.act.set_move_command()
                 elif key == "v": #vision
                     print(colored("[command] vision!", "green"))
                     self.drone.camera.switch_vision()

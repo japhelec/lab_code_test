@@ -57,7 +57,7 @@ class Tello:
         print ('sent: streamon')
         self.socket.sendto(b'moff', self.tello_address)
         print ('sent: moff')
-        # self.socket.sendto(b'setfps low', self.tello_address)
+        # self.socket.sendto(b'setfps high', self.tello_address)
         # print ('sent: setfps')
 
 
@@ -118,7 +118,7 @@ class Tello:
             try:
                 stateStr, ip = self.socket_state.recvfrom(3000)
                 self.state.set(stateStr)
-                self.state.show()
+                # self.state.show()
             except socket.error as exc:
                 print ("Caught exception socket.error : %s" % exc)
 
